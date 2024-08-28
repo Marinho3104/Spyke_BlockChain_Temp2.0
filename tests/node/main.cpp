@@ -1,9 +1,10 @@
 
 #include <iostream>
+#include "node.h"
 
 int main (int argc, char *argv[]) {
-  
-  std::cout << "Marinho" << std::endl;
+
+  node::Node d = node::Node();
 
   return 0;
 }
