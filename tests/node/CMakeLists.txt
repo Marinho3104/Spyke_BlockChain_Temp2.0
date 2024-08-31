@@ -7,6 +7,8 @@ project(Spyke_Node)
 # Source files
 add_executable(Spyke_Node 
   ${PROJECT_SOURCE_DIR}/node/node.cpp
+  ${PROJECT_SOURCE_DIR}/node/node_connections_manager.cpp
+  ${PROJECT_SOURCE_DIR}/node/connection.cpp
 
   ${PROJECT_SOURCE_DIR}/tests/node/main.cpp
 )
