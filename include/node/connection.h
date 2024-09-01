@@ -3,6 +3,11 @@
 #ifndef NODE_CONNECTION_H
 #define NODE_CONNECTION_H
 
+#include <memory>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <type_traits>
+
 namespace node {
 
   // For both Ip types, having the port set to 0, means that 
@@ -16,13 +21,15 @@ namespace node {
 
   struct Ip_V6 {
 
+    char address[ 16 ];
     unsigned short port;
 
   };
 
+  template < typename  IP >
   struct Socket_Data {
 
-    void* hint;
+    typename std::conditional< std::is_same< IP, Ip_V4 >::value, sockaddr_in, sockaddr_in6 >::type hint;
     int socket;
 
   };
@@ -32,7 +39,7 @@ namespace node {
 
     private:
 
-      Socket_Data socket_data;    
+      Socket_Data< IP > socket_data;    
       IP ip_information;
 
       unsigned char status;
@@ -45,9 +52,13 @@ namespace node {
       // Gets the IP information of this connection, and sets the connection as Not Connected
       Connection< IP >( IP& );
 
+      // Returns true if the information set in this 
+      // connection is valid
+      bool is_valid();
+
       // Will interpret this connection as a server
       // and boot up a server with ip_information data
-      bool start_server();
+      bool setup_server();
 
       // Will try to connect with the 
       // ip_information data

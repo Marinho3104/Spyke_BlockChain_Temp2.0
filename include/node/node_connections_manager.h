@@ -42,6 +42,11 @@ namespace node {
 
       // Inicializes the manager with all necessary settings/information
       Node_Connections_Manager( Node_Connections_Manager_Settings< IP >& );
+
+      // Execute all necessary tasks, prior to start the
+      // main loop, including start server listening, trying to connect 
+      // with given nodes ip information, etc ...
+      bool setup();
     
       // Will initialize this manager "process", will not return
       // until is to close the manager activity.

@@ -1,6 +1,7 @@
 
 #include "node_connections_manager.h"
 #include "connection.h"
+#include "node.h"
 #include <iostream>
 #include <memory>
 
@@ -34,9 +35,27 @@ node::Node_Connections_Manager< IP >::Node_Connections_Manager( Node_Connections
 }
 
 template < typename IP >
+bool node::Node_Connections_Manager< IP >::setup() {
+
+  // If server connection ip information is valid, setups
+  // the connection information
+  if( server_connection.is_valid() ) {
+
+    bool sts = server_connection.setup_server();
+    if( ! sts ) return 0;
+
+  }
+
+  
+
+  return 0;
+
+}
+
+template < typename IP >
 void node::Node_Connections_Manager< IP >::start() {
 
-  std::cout << "Starting connections manager" << std::endl;
+  
 
 }
 
