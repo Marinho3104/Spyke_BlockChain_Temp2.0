@@ -20,6 +20,10 @@ int main (int argc, char *argv[]) {
 
   node::Node node = node::Node( node_settings );
 
+  bool sts = node.setup();
+
+  if( ! sts ) return 1;
+
   // Start node processes
   node.run();
 

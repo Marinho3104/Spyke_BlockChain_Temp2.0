@@ -3,7 +3,6 @@
 #ifndef NODE_CONNECTION_H
 #define NODE_CONNECTION_H
 
-#include <memory>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <type_traits>
@@ -26,23 +25,26 @@ namespace node {
 
   };
 
+  // Holds information about the open socket connection
   template < typename  IP >
   struct Socket_Data {
 
     typename std::conditional< std::is_same< IP, Ip_V4 >::value, sockaddr_in, sockaddr_in6 >::type hint;
+
     int socket;
 
   };
 
+  // Represents a socket connection ( server can represent a server as well )
   template < typename IP >
   class Connection {
 
     private:
 
-      Socket_Data< IP > socket_data;    
+      Socket_Data< IP > socket_data; // Socket connection information
       IP ip_information;
 
-      unsigned char status;
+      unsigned char status; // Not valid / Not Connected / Connected
 
     public:
 

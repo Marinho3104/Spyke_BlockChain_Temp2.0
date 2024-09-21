@@ -12,6 +12,7 @@ node::Connection< IP >::Connection() : status( NODE_CONNECTION_H_CONNECTION_STAT
 template < typename IP >
 node::Connection< IP >::Connection( IP& ip_information ) : ip_information( ip_information ), status( NODE_CONNECTION_H_CONNECTION_STATUS_NOT_CONNECTED ) {
 
+  // To avoid use of unistialized data
   memset( &socket_data.hint, 0, sizeof( socket_data.hint ) );
 
 }
@@ -22,7 +23,12 @@ bool node::Connection< IP >::is_valid() { return status != NODE_CONNECTION_H_CON
 template <>
 bool node::Connection< node::Ip_V4 >::setup_server() {
 
-  // Valid check
+  // Normal instruction flow for
+  // the initialization of a server
+  // socket, if success also changes the 
+  // status to Connected, meaning that the
+  // server is up
+  
   if( ! is_valid() ) return 0;
 
   socket_data.socket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
@@ -37,6 +43,8 @@ bool node::Connection< node::Ip_V4 >::setup_server() {
 
   sts = listen( socket_data.socket, 5 );
   if( sts == -1 ) { close( socket_data.socket ); return 0; }
+   
+  status = NODE_CONNECTION_H_CONNECTION_STATUS_CONNECTED;
 
   return 1;
 
@@ -45,7 +53,12 @@ bool node::Connection< node::Ip_V4 >::setup_server() {
 template <>
 bool node::Connection< node::Ip_V6 >::setup_server() { 
 
-  // Valid check
+  // Normal instruction flow for
+  // the initialization of a server
+  // socket, if success also changes the 
+  // status to Connected, meaning that the
+  // server is up
+
   if( ! is_valid() ) return 0;
 
   socket_data.socket = socket( AF_INET6, SOCK_STREAM, IPPROTO_TCP );
@@ -63,6 +76,8 @@ bool node::Connection< node::Ip_V6 >::setup_server() {
   sts = listen( socket_data.socket, 5 );
   if( sts == -1 ) { close( socket_data.socket ); return 0; }
 
+  status = NODE_CONNECTION_H_CONNECTION_STATUS_CONNECTED;
+
   return 1;
 
 }
@@ -70,7 +85,11 @@ bool node::Connection< node::Ip_V6 >::setup_server() {
 template <>
 bool node::Connection< node::Ip_V4 >::connect() { 
 
-  // Valid check
+  // Normal instruction flow for
+  // the initialization of a connection
+  // socket, if success also changes the 
+  // status to Connected
+  
   if( ! is_valid() ) return 0;
 
   socket_data.socket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
@@ -83,6 +102,8 @@ bool node::Connection< node::Ip_V4 >::connect() {
   int sts = ::connect( socket_data.socket, ( sockaddr* ) &socket_data.hint, sizeof( socket_data.hint ) );
   if( sts == -1 ) { close( socket_data.socket ); return 0; }
 
+  status = NODE_CONNECTION_H_CONNECTION_STATUS_CONNECTED;
+
   return 1;
 
 }
@@ -90,7 +111,11 @@ bool node::Connection< node::Ip_V4 >::connect() {
 template <>
 bool node::Connection< node::Ip_V6 >::connect() { 
 
-  // Valid check
+  // Normal instruction flow for
+  // the initialization of a connection
+  // socket, if success also changes the 
+  // status to Connected
+
   if( ! is_valid() ) return 0;
 
   socket_data.socket = socket( AF_INET6, SOCK_STREAM, IPPROTO_TCP );
@@ -104,6 +129,8 @@ bool node::Connection< node::Ip_V6 >::connect() {
 
   sts = ::connect( socket_data.socket, ( sockaddr* ) &socket_data.hint, sizeof( socket_data.hint ) );
   if( sts == -1 ) { close( socket_data.socket ); return 0; }
+
+  status = NODE_CONNECTION_H_CONNECTION_STATUS_CONNECTED;
 
   return 0; 
 

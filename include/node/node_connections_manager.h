@@ -20,20 +20,23 @@ namespace node {
 
   };
 
+  // Class responsible for handling every open connection that the Node have
+  // and the server if applicable
   template < typename IP >
   class Node_Connections_Manager {
 
     private:
 
-      Node_Connections_Manager_Settings< IP > settings;
+      Node_Connections_Manager_Settings< IP > settings; // Settings for setup phase
 
+      // Possible connections open in the manager
       std::unique_ptr< Connection< Ip_V4 >[] > ip_v4_stable_connections;
       std::unique_ptr< Connection< Ip_V6 >[] > ip_v6_stable_connections;
 
       std::unique_ptr< Connection< Ip_V4 >[] > ip_v4_temporary_connections;
       std::unique_ptr< Connection< Ip_V6 >[] > ip_v6_temporary_connections;
 
-      Connection< IP > server_connection;
+      Connection< IP > server_connection; // Server connection
 
     public:
 
