@@ -4,67 +4,78 @@
 #define NODE_CONNECTION_H
 
 #include <netinet/in.h>
-#include <sys/socket.h>
 #include <type_traits>
 
 namespace node {
 
-  // For both Ip types, having the port set to 0, means that 
-  // the information set should not be considered as valid information
+  // Represents information about the IP 
+  // information of a possible connection
+  // port is 0, when the information is invalid
   struct Ip_V4 {
 
-    unsigned int address;
-    unsigned short port;
+    const unsigned int address;
+    const unsigned short port;
 
   };
 
   struct Ip_V6 {
+  
+    const char address[ 16 ];
+    const unsigned short port;
 
-    char address[ 16 ];
-    unsigned short port;
+    Ip_V6();
+
+    Ip_V6( const char [ 16 ], const unsigned short );
+
+    Ip_V6( const Ip_V6& );
 
   };
 
-  // Holds information about the open socket connection
-  template < typename  IP >
+  // Represents all socket related information
+  // about a file descriptor ( socket connection )
+  template < typename IP >
   struct Socket_Data {
 
-    typename std::conditional< std::is_same< IP, Ip_V4 >::value, sockaddr_in, sockaddr_in6 >::type hint;
-
-    int socket;
+      const typename std::conditional< std::is_same< IP, Ip_V4 >::value, sockaddr_in, sockaddr_in6 >::type hint;
+      const int socket;
 
   };
 
-  // Represents a socket connection ( server can represent a server as well )
   template < typename IP >
   class Connection {
 
     private:
 
-      Socket_Data< IP > socket_data; // Socket connection information
-      IP ip_information;
+      const Socket_Data< IP > socket_data;
+      const IP ip_information;
 
-      unsigned char status; // Not valid / Not Connected / Connected
+      unsigned char status;
 
     public:
 
-      // Default constructor, will set the connection as invalid
-      Connection< IP >();
+      Connection< IP >( const Connection< IP >& ) = delete;
 
-      // Gets the IP information of this connection, and sets the connection as Not Connected
-      Connection< IP >( IP& );
+      Connection< IP >( Connection< IP >&& );
+      
+      // Sets the connection as invalid
+      Connection< IP >(); 
 
-      // Returns true if the information set in this 
-      // connection is valid
-      bool is_valid();
+      // Tries to establish a connection with given IP
+      Connection< IP >( const Socket_Data< IP >&, const IP& ); 
 
-      // Will interpret this connection as a server
-      // and boot up a server with ip_information data
-      bool setup_server();
+      const bool operator==( const Connection< IP >& ) const;
 
-      // Will try to connect with the 
-      // ip_information data
-      bool connect();
+      const Socket_Data< IP >& get_socket_data() const;
+
+      const bool is_valid() const;
+
+      void close_connection();
+
+      // Will try to connect to the given IP and return the connection
+      static const Connection< IP > create_connection( const IP& );
+
+      // Will try to setup a server with given IP and return the connection
+      static const Connection< IP > create_server( const IP& );
 
   };
 
@@ -72,7 +83,7 @@ namespace node {
 
 /** TYPES OF POSSIBLE STATUS FOR THE CONNECTION CLASS **/
 #define NODE_CONNECTION_H_CONNECTION_STATUS_NOT_VALID 0 // Means nothing of the information set is valid
-#define NODE_CONNECTION_H_CONNECTION_STATUS_NOT_CONNECTED 1 // Means the information set is correct but the connection is not made
-#define NODE_CONNECTION_H_CONNECTION_STATUS_CONNECTED 2 // Means that the connection is open
+#define NODE_CONNECTION_H_CONNECTION_STATUS_CONNECTED 1 // Means that the connection is open
+#define NODE_CONNECTION_H_CONNECTION_STATUS_DESTRUCTOR_ENABLE 2 
 
 #endif
